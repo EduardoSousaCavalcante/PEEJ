@@ -141,3 +141,39 @@ const telefoneInput = document.getElementById('telefone');
 
   // Inicializa
   CPFFormatado.textContent = formatarCPF(slider.value);
+
+// Comparador de dados
+const limite = 20;
+const cores = ['vermelho','azul','verde'];
+const contadores = { vermelho:0, azul:0, verde:0 };
+
+function atualizarInterface(){
+    let total = contadores.vermelho + contadores.azul + contadores.verde;
+    if(total === 0){
+        document.getElementById('liderTexto').textContent = 'Clique em um botão para começar!';
+        return;
+    }
+
+    // Atualiza cada barra e texto
+    cores.forEach(cor => {
+        const fill = document.getElementById('fill-' + cor);
+        const cont = document.getElementById('cont-' + cor);
+        const percBarra = Math.min(contadores[cor], limite) * 5;
+        fill.style.width = percBarra + '%';
+        cont.textContent = contadores[cor] + ' cliques';
+    });
+
+    // Descobre o líder
+    const lider = Object.keys(contadores).reduce((a,b) => contadores[a] > contadores[b] ? a : b);
+    const percLider = ((contadores[lider] / total) * 100).toFixed(1);
+    const nome = lider.charAt(0).toUpperCase() + lider.slice(1);
+    document.getElementById('liderTexto').textContent = `O botão ${nome} está se sobressaindo com ${percLider}%!`;
+}
+
+// Adiciona eventos aos botões
+cores.forEach(cor => {
+    document.getElementById('btn-' + cor).addEventListener('click', () => {
+        contadores[cor]++;
+        atualizarInterface();
+    });
+});
